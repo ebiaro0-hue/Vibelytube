@@ -43,6 +43,15 @@ jobs:
           echo "PROJECT_DIR=$GITHUB_WORKSPACE/$PROJECT_DIR" >> "$GITHUB_ENV"
           echo "Project folder: $PROJECT_DIR"
 
+      - name: Fix build.gradle.kts (Properties import)
+        run: |
+          F="$PROJECT_DIR/app/build.gradle.kts"
+          if ! grep -q '^import java.util.Properties' "$F"; then
+            sed -i 's/java\.util\.Properties()/Properties()/' "$F"
+            sed -i '1i import java.util.Properties\n' "$F"
+          fi
+          head -5 "$F"
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
